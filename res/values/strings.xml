@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, FeedburnerDailyStatsActivity!</string>
+    <string name="app_name">Feedburner Daily Stats</string>
+    <string name="getStats">Get Statistics</string>
+    <string name="uriInputLabel">URI of your feed</string>
+    <string name="clickHandler">clickHandler</string>
+    <string name="subsLabel">Subscribers: </string>
+    <string name="dateLabel">Date: </string>
+    <string name="hitsLabel">Hits: </string>
+    <string name="downloadsLabel">Downloads: </string>
+    <string name="reachLabel">Reach: </string>
+    <string name="startButton">Notify</string>
+    <string name="startButtonHandler">startButtonHandler</string>
+    <string name="stopButton">Stop</string>
+    <string name="stopButtonHandler">stopButtonHandler</string>
+</resources>
