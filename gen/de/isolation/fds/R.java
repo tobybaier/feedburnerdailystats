@@ -11,16 +11,17 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int ep=0x7f020000;
+        public static final int icon=0x7f020001;
     }
     public static final class id {
         public static final int button1=0x7f050002;
-        public static final int button2=0x7f050011;
-        public static final int button3=0x7f050012;
         public static final int dateView=0x7f050006;
         public static final int downloadsView=0x7f05000d;
         public static final int editText1=0x7f050001;
+        public static final int epImage=0x7f050012;
         public static final int hitsView=0x7f05000b;
+        public static final int notifyCheckbox=0x7f050010;
         public static final int reachView=0x7f05000f;
         public static final int subsView=0x7f050009;
         public static final int tableLayout1=0x7f050003;
@@ -29,9 +30,9 @@ public final class R {
         public static final int tableRow2=0x7f05000a;
         public static final int tableRow3=0x7f05000c;
         public static final int tableRow4=0x7f05000e;
-        public static final int tableRow5=0x7f050010;
         public static final int textView1=0x7f050000;
         public static final int textView2=0x7f050008;
+        public static final int textView3=0x7f050011;
         public static final int textView4=0x7f050005;
     }
     public static final class layout {
@@ -39,17 +40,16 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040001;
+        public static final int brought=0x7f04000c;
         public static final int clickHandler=0x7f040004;
         public static final int dateLabel=0x7f040006;
         public static final int downloadsLabel=0x7f040008;
         public static final int getStats=0x7f040002;
         public static final int hello=0x7f040000;
         public static final int hitsLabel=0x7f040007;
+        public static final int notify=0x7f04000a;
+        public static final int notifyChangedHandler=0x7f04000b;
         public static final int reachLabel=0x7f040009;
-        public static final int startButton=0x7f04000a;
-        public static final int startButtonHandler=0x7f04000b;
-        public static final int stopButton=0x7f04000c;
-        public static final int stopButtonHandler=0x7f04000d;
         public static final int subsLabel=0x7f040005;
         public static final int uriInputLabel=0x7f040003;
     }

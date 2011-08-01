@@ -13,7 +13,7 @@
     android:layout_height="wrap_content" 
     android:layout_width="wrap_content"
     android:onClick="clickHandler"></Button>
-    
+     
     
     <TableLayout android:id="@+id/tableLayout1" android:layout_height="wrap_content" android:layout_width="match_parent">
     
@@ -37,9 +37,13 @@
           <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="wrap_content" android:text="@string/reachLabel"></TextView>
           <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:text="" android:layout_height="wrap_content" android:id="@+id/reachView" android:layout_width="wrap_content"></TextView>
         </TableRow>
-        <TableRow android:id="@+id/tableRow5" android:layout_width="wrap_content" android:layout_height="wrap_content">
-            <Button android:layout_height="wrap_content" android:text="@string/startButton" android:id="@+id/button2" android:layout_width="wrap_content"></Button>
-            <Button android:layout_height="wrap_content" android:id="@+id/button3" android:layout_width="wrap_content" android:text="@string/stopButton"></Button>
-        </TableRow>
     </TableLayout>
+    <CheckBox android:text="@string/notify" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/notifyCheckbox"></CheckBox>
+    <TextView android:text="@string/brought" android:id="@+id/textView3" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content"></TextView>
+    <ImageView android:id="@+id/epImage"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:src="@drawable/ep"/>
+
+    
 </LinearLayout>

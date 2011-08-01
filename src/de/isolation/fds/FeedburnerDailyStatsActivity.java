@@ -14,35 +14,75 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FeedburnerDailyStatsActivity extends Activity {
-	private static final String SETTINGSNAME = "FeedburnerDailyStatsSettings";
-	private static final String FEEDURI = "feedUri";
-	private static final String DATE = "date";
-	private static final String CIRCULATION = "circulation";
+public class FeedburnerDailyStatsActivity extends Activity { 
+	public static final String SETTINGSNAME = "FeedburnerDailyStatsSettings";
+	public static final String FEEDURI = "feedUri";
+	public static final String DATE = "date";
+	public static final String CIRCULATION = "circulation";
+	public static final int APP_ID = 2342; 
 	private static final String HITS = "hits";
 	private static final String DOWNLOADS = "downloads";
 	private static final String REACH = "reach";
-	private static final String BASEURL = "https://feedburner.google.com/api/awareness/1.0/GetFeedData?uri=";
+	public static final String BASEURL = "https://feedburner.google.com/api/awareness/1.0/GetFeedData?uri=";
 	Intent svc;
     
+	private static final String TAG = "fds";
 	
 
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	Log.d(TAG, this.getClass()+":onCreate");
         super.onCreate(savedInstanceState);
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(2342);
         setContentView(R.layout.main);
+        // remove notification
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(2342);
+        // get last uri from settings and set to input field
         SharedPreferences settings =  
-        		getSharedPreferences(getSettingsname(), MODE_PRIVATE);
-        String lastUri = settings.getString(getFeeduri(), "");
+        		getSharedPreferences(SETTINGSNAME, MODE_PRIVATE);
+        String lastUri = settings.getString(FEEDURI, "");
         EditText input = (EditText) findViewById(R.id.editText1);
         input.setText(lastUri);
+        
+        // initialize notification checkbox
+        final CheckBox notifyCheckbox = (CheckBox) findViewById(R.id.notifyCheckbox);
+        if (svc != null) {
+        	notifyCheckbox.setChecked(true);
+        } else {
+        	notifyCheckbox.setChecked(false);
+        }
+        // add listener to check box
+        notifyCheckbox.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (((CheckBox) v).isChecked()) {
+                    startNotificationService();
+                } else {
+                    stopNotificationService();
+                }
+            }
+        });
+        
+        // link the image
+        ImageView img = (ImageView)findViewById(R.id.epImage);
+        img.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://einschlafen-podcast.de"));
+                startActivity(intent);
+            }
+        });
         
     }
 
@@ -50,12 +90,16 @@ public class FeedburnerDailyStatsActivity extends Activity {
      * get stats from Feedburner
      */
     public void clickHandler(View view) {
+    	// get uri from input field
     	String uri = new StringBuffer(((EditText) findViewById(R.id.editText1)).getText()).toString();
+    	// store it in settings
         SharedPreferences settings =  
-        		getSharedPreferences(getSettingsname(), MODE_PRIVATE);
+        		getSharedPreferences(SETTINGSNAME, MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = settings.edit();  
-        prefEditor.putString(getFeeduri(), uri);
+        prefEditor.putString(FEEDURI, uri);
         prefEditor.commit();
+        
+        // get stats from feedburner
     	String result = null;
     	try {
     		HttpClient hc = new DefaultHttpClient();
@@ -65,7 +109,7 @@ public class FeedburnerDailyStatsActivity extends Activity {
     			result = EntityUtils.toString(response.getEntity());	
     		}
     	} catch (IOException e) {
-    		// logging???
+    		Log.e(TAG, "IOException: "+ e.getMessage(), e);
     	}
     	getValue(result, DATE, (TextView) findViewById(R.id.dateView));
     	getValue(result, CIRCULATION, (TextView) findViewById(R.id.subsView));
@@ -86,37 +130,17 @@ public class FeedburnerDailyStatsActivity extends Activity {
     	}
 	}
 	
-	public void startButtonHandler() {
+	public void startNotificationService() {
 		if (svc == null) {
 			svc = new Intent(this, FeedburnerDailyStatsService.class);
 			startService(svc);
 		}
 	}
 	
-	public void stopButtonHandler() {
+	public void stopNotificationService() {
 		if (svc != null) {
 			stopService(svc);
 		}
 		svc = null;
-	}
-
-	public static String getFeeduri() {
-		return FEEDURI;
-	}
-
-	public static String getSettingsname() {
-		return SETTINGSNAME;
-	}
-
-	public static String getBaseurl() {
-		return BASEURL;
-	}
-	
-	public static String getCirculation() {
-		return CIRCULATION;
-	}
-	
-	public static String getDate() {
-		return DATE;
 	}
 }

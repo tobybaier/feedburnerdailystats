@@ -10,8 +10,7 @@
     <string name="hitsLabel">Hits: </string>
     <string name="downloadsLabel">Downloads: </string>
     <string name="reachLabel">Reach: </string>
-    <string name="startButton">Notify</string>
-    <string name="startButtonHandler">startButtonHandler</string>
-    <string name="stopButton">Stop</string>
-    <string name="stopButtonHandler">stopButtonHandler</string>
+    <string name="notify">Notify for new values</string>
+    <string name="notifyChangedHandler">notifyChangedHandler</string>
+    <string name="brought">Brought to you by Einschlafen Podcast</string>
 </resources>

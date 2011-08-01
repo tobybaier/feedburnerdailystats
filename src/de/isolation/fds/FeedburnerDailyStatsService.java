@@ -21,22 +21,22 @@ import android.os.IBinder;
 
 public class FeedburnerDailyStatsService extends android.app.Service {
 	private Timer timer = new Timer();
-	private static final long INTERVAL = 1000 * 60 * 10; // every 10 minutes
+	private static final long INTERVAL = 1000 * 60 * 30; // every 30 minutes
 	private static final String LASTNOTIFIED = "lastNotified";
-	private static final int APP_ID = 2342; 
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
+		// no IPC
 		return null;
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		// start the service with stored URI
 		SharedPreferences settings =  
-				getSharedPreferences(FeedburnerDailyStatsActivity.getSettingsname(), MODE_PRIVATE);
-		String uri = settings.getString(FeedburnerDailyStatsActivity.getFeeduri(), "");
+				getSharedPreferences(FeedburnerDailyStatsActivity.SETTINGSNAME, MODE_PRIVATE);
+		String uri = settings.getString(FeedburnerDailyStatsActivity.FEEDURI, "");
 		startservice(uri);
 	}
 	private void startservice(final String uri) {
@@ -46,7 +46,7 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 				String result = null;
 				try {
 					HttpClient hc = new DefaultHttpClient();
-					HttpGet get = new HttpGet(FeedburnerDailyStatsActivity.getBaseurl() + uri);
+					HttpGet get = new HttpGet(FeedburnerDailyStatsActivity.BASEURL + uri);
 					HttpResponse response = hc.execute(get);
 					if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						result = EntityUtils.toString(response.getEntity());	
@@ -57,15 +57,16 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 
 				// first let's see whether we have already notified about this...
 				SharedPreferences settings =  
-						getSharedPreferences(FeedburnerDailyStatsActivity.getSettingsname(), MODE_PRIVATE);
+						getSharedPreferences(FeedburnerDailyStatsActivity.SETTINGSNAME, MODE_PRIVATE);
 				String lastNotifiedSetting = settings.getString(LASTNOTIFIED, "");
-				String newDate = getValue(result, FeedburnerDailyStatsActivity.getDate());
+				String newDate = getValue(result, FeedburnerDailyStatsActivity.DATE);
+				// if there is new information, extract and notify
 				if (!lastNotifiedSetting.equals(newDate)) {
 					SharedPreferences.Editor prefEditor = settings.edit(); 
 					prefEditor.putString(LASTNOTIFIED, newDate);
 					// now notify
 					mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-					String numOfSubscribers = getValue(result, FeedburnerDailyStatsActivity.getCirculation());
+					String numOfSubscribers = getValue(result, FeedburnerDailyStatsActivity.CIRCULATION);
 					Intent contentIntent = new Intent(FeedburnerDailyStatsService.this, FeedburnerDailyStatsActivity.class);
 					Notification notification = new Notification(R.drawable.icon,"Yesterdays subscribers: "+numOfSubscribers, System.currentTimeMillis());
 					notification.setLatestEventInfo(FeedburnerDailyStatsService.this,
@@ -73,9 +74,9 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 							"Subscribers for " + newDate + ": "+numOfSubscribers,
 							PendingIntent.getActivity(FeedburnerDailyStatsService.this, 0, contentIntent,
 									PendingIntent.FLAG_CANCEL_CURRENT));
-					long[] vibration = {0,100,200,20,20,20,20,20,20,20};
+					long[] vibration = {0,100,200,20,20,20,20,20,20,20}; // funny buzzing :)
 					notification.vibrate = vibration;
-					mManager.notify(APP_ID, notification);
+					mManager.notify(FeedburnerDailyStatsActivity.APP_ID, notification);
 				} 
 			}
 
@@ -95,7 +96,6 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		if (timer != null) {
 			timer.cancel();
