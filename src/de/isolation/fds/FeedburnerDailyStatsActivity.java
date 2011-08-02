@@ -33,9 +33,7 @@ public class FeedburnerDailyStatsActivity extends Activity {
 	private static final String HITS = "hits";
 	private static final String DOWNLOADS = "downloads";
 	private static final String REACH = "reach";
-	public static final String BASEURL = "https://feedburner.google.com/api/awareness/1.0/GetFeedData?uri=";
-	Intent svc;
-    
+	public static final String BASEURL = "https://feedburner.google.com/api/awareness/1.0/GetFeedData?uri=";    
 	private static final String TAG = "fds";
 	
 
@@ -56,7 +54,8 @@ public class FeedburnerDailyStatsActivity extends Activity {
         
         // initialize notification checkbox
         final CheckBox notifyCheckbox = (CheckBox) findViewById(R.id.notifyCheckbox);
-        if (svc != null) {
+        final FdsApp app = ((FdsApp)getApplicationContext());
+        if (app.getService() != null) {
         	notifyCheckbox.setChecked(true);
         } else {
         	notifyCheckbox.setChecked(false);
@@ -65,9 +64,9 @@ public class FeedburnerDailyStatsActivity extends Activity {
         notifyCheckbox.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (((CheckBox) v).isChecked()) {
-                    startNotificationService();
+                    app.startNotificationService();
                 } else {
-                    stopNotificationService();
+                    app.stopNotificationService();
                 }
             }
         });
@@ -130,17 +129,4 @@ public class FeedburnerDailyStatsActivity extends Activity {
     	}
 	}
 	
-	public void startNotificationService() {
-		if (svc == null) {
-			svc = new Intent(this, FeedburnerDailyStatsService.class);
-			startService(svc);
-		}
-	}
-	
-	public void stopNotificationService() {
-		if (svc != null) {
-			stopService(svc);
-		}
-		svc = null;
-	}
 }

@@ -22,7 +22,6 @@ import android.os.IBinder;
 public class FeedburnerDailyStatsService extends android.app.Service {
 	private Timer timer = new Timer();
 	private static final long INTERVAL = 1000 * 60 * 30; // every 30 minutes
-	private static final String LASTNOTIFIED = "lastNotified";
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -56,19 +55,18 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 				}
 
 				// first let's see whether we have already notified about this...
-				SharedPreferences settings =  
-						getSharedPreferences(FeedburnerDailyStatsActivity.SETTINGSNAME, MODE_PRIVATE);
-				String lastNotifiedSetting = settings.getString(LASTNOTIFIED, "");
+				
+				FdsApp app = (FdsApp)getApplicationContext();
+				String lastNotifiedSetting = app.getLatestDay();
 				String newDate = getValue(result, FeedburnerDailyStatsActivity.DATE);
 				// if there is new information, extract and notify
 				if (!lastNotifiedSetting.equals(newDate)) {
-					SharedPreferences.Editor prefEditor = settings.edit(); 
-					prefEditor.putString(LASTNOTIFIED, newDate);
+					app.setLatestDay(newDate);
 					// now notify
 					mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 					String numOfSubscribers = getValue(result, FeedburnerDailyStatsActivity.CIRCULATION);
 					Intent contentIntent = new Intent(FeedburnerDailyStatsService.this, FeedburnerDailyStatsActivity.class);
-					Notification notification = new Notification(R.drawable.icon,"Yesterdays subscribers: "+numOfSubscribers, System.currentTimeMillis());
+					Notification notification = new Notification(R.drawable.logo64,"Yesterdays subscribers: "+numOfSubscribers, System.currentTimeMillis());
 					notification.setLatestEventInfo(FeedburnerDailyStatsService.this,
 							"Feedburner Daily Stats",
 							"Subscribers for " + newDate + ": "+numOfSubscribers,
