@@ -34,6 +34,7 @@ public class FdsApp extends Application {
 
 	public void startNotificationService() {
 		if (getIntent() == null) {
+			latestDay = "0";
 			Intent svc = new Intent(this, FeedburnerDailyStatsService.class);
 			startService(svc);
 			setIntent(svc);
@@ -43,6 +44,7 @@ public class FdsApp extends Application {
 	public void stopNotificationService() {
         if (getIntent() != null) {
 			stopService(getIntent());
+			setIntent(null);
 		}
 	}
 	

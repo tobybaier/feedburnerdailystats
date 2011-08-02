@@ -35,6 +35,8 @@ public class FeedburnerDailyStatsActivity extends Activity {
 	private static final String REACH = "reach";
 	public static final String BASEURL = "https://feedburner.google.com/api/awareness/1.0/GetFeedData?uri=";    
 	private static final String TAG = "fds";
+
+	private HttpClient hc;
 	
 
 	/** Called when the activity is first created. */
@@ -42,6 +44,7 @@ public class FeedburnerDailyStatsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	Log.d(TAG, this.getClass()+":onCreate");
         super.onCreate(savedInstanceState);
+        hc = new DefaultHttpClient();
         setContentView(R.layout.main);
         // remove notification
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(2342);
@@ -84,6 +87,18 @@ public class FeedburnerDailyStatsActivity extends Activity {
         });
         
     }
+    
+    
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		hc.getConnectionManager().shutdown();
+		hc = null;
+	}
+
+
 
 	/**
      * get stats from Feedburner
@@ -101,7 +116,6 @@ public class FeedburnerDailyStatsActivity extends Activity {
         // get stats from feedburner
     	String result = null;
     	try {
-    		HttpClient hc = new DefaultHttpClient();
     		HttpGet get = new HttpGet(BASEURL + uri);
     		HttpResponse response = hc.execute(get);
     		if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

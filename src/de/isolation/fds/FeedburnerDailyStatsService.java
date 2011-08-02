@@ -22,6 +22,7 @@ import android.os.IBinder;
 public class FeedburnerDailyStatsService extends android.app.Service {
 	private Timer timer = new Timer();
 	private static final long INTERVAL = 1000 * 60 * 30; // every 30 minutes
+	private HttpClient hc;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -32,6 +33,7 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		hc = new DefaultHttpClient();
 		// start the service with stored URI
 		SharedPreferences settings =  
 				getSharedPreferences(FeedburnerDailyStatsActivity.SETTINGSNAME, MODE_PRIVATE);
@@ -44,7 +46,6 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 			public void run() {
 				String result = null;
 				try {
-					HttpClient hc = new DefaultHttpClient();
 					HttpGet get = new HttpGet(FeedburnerDailyStatsActivity.BASEURL + uri);
 					HttpResponse response = hc.execute(get);
 					if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -65,7 +66,8 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 					// now notify
 					mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 					String numOfSubscribers = getValue(result, FeedburnerDailyStatsActivity.CIRCULATION);
-					Intent contentIntent = new Intent(FeedburnerDailyStatsService.this, FeedburnerDailyStatsActivity.class);
+					Intent contentIntent = new Intent(app, FeedburnerDailyStatsActivity.class);
+					contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 					Notification notification = new Notification(R.drawable.logo64,"Yesterdays subscribers: "+numOfSubscribers, System.currentTimeMillis());
 					notification.setLatestEventInfo(FeedburnerDailyStatsService.this,
 							"Feedburner Daily Stats",
@@ -95,6 +97,8 @@ public class FeedburnerDailyStatsService extends android.app.Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		hc.getConnectionManager().shutdown();
+		hc = null;
 		if (timer != null) {
 			timer.cancel();
 		}
